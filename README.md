@@ -122,7 +122,8 @@ Optional parameters are
 * treatment
 * replicate
 * fraction
-if not specified as e.g. --experiement mytestexperiment --genotype col0 etc. you will be prompted.
+
+if not specified during script initiation, e.g. --experiement mytestexperiment --genotype col0 etc., you will be prompted for the input.
 
 ## License
 The msparser library is subject to the licese agreement of Mascot, s. Mascot Parser Licence Agreement at http://www.matrixscience.com/msparser_download.html 
