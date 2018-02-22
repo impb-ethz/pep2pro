@@ -96,21 +96,25 @@ decoy=False,True
 ### How To
 
 1. **makep2pdb.py**
+
 Run makep2pdb.py to generate needed summary files for the database you used in mascot. This creates two additional files *inputfile*.json and *inputfile*.stats.json which will be saved in the [SEARCHDATABASEPATH] (s. mascot_search.ini).
 ```sh
 python make2pdb.py <searchdatabase>
 ```
 2. **get_ma_datfile.py**
+
 This script downloads a .dat file from the mascot server for further processing with load_ma_datfile.py. The server url and access credentials have to be provided in mascot_server.ini.
 ```sh
 python get_ma_datfile.py <mascot-directory> <mascot-datfile>
 ```
 3. **load_ma_datfile.py**
+
 This script filters a .dat file according to minimum ionsscore, maximum peptide expectation value and the pep2pro ambiguity filter. The script creates an outputfile in json format as *local-datfile*.json
 ```sh
 python load_ma_datfile.py <local-datfile> <min-ionsscore> <max-expectation-value>
 ```
 4. **todb_ma_datfile.py**
+
 This script imports the json resultfile from load_ma_datfile.py into the MySQL Database, specified in the MYSQLDB section of the mascot_search.ini.
 ```sh
 python todb_ma_datfile.py <local-json-resultfile>
