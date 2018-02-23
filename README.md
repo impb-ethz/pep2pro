@@ -21,6 +21,9 @@ If you want to import the data into a MySQL Database:
 
     $ git clone https://github.com/impb-ethz/pep2pro.git
 
+To use easy pep2pro together with a MySQL Database execute the following command. You need to have the necessary privileges to create a database. The name of the database will be **pep2pro**, please check before execution, as existing database will be dropped. Additionally a **user pep2pro** with **password pep2pro** and all necessary database privileges (select, insert, update, delete, lock tables) will be created. Document pep2pro_ER.pdf shows the entity–relationship model of the pep2pro database. 
+
+    $ mysql -u root -p < easy_pep2pro.sql
 
 ## How to use
 
