@@ -30,7 +30,7 @@ Two ini-files are required:
 #### mascot_server.ini
 The file contains parameter to access the mascot server (url) and the scripts to call for login and to download files. Additionally it contains the necessary login credentials for the mascot server. 
 The file is needed by script get_ma_datfile.py
-```
+```ini
 [SERVER]
 url=http://<url-to-mascot-server>/mascot/
 login=cgi/login.pl
@@ -47,7 +47,7 @@ path=/var/mascot/datfiles/
 
 #### mascot_search.ini
 The file contains parameter to parse and load mascot dat-files. 
-```
+```ini
 [PEPTIDESUMMARY]
 ;defines the minimal probability of the ms_peptidesummary object call
 MinProb=0.1
@@ -120,26 +120,26 @@ decoy=False,True
 
 Run makep2pdb.py to generate needed summary files for the database you used in mascot. This creates two additional files *inputfile*.json and *inputfile*.stats.json which will be saved in the [SEARCHDATABASEPATH] (s. mascot_search.ini).
 
-  $ python make2pdb.py <searchdatabase>
+    $ python make2pdb.py <searchdatabase>
 
 2. **get_ma_datfile.py**
 
 This script downloads a .dat file from the mascot server for further processing with parse_ma_datfile.py. The server url and access credentials have to be provided in mascot_server.ini.
-```sh
-python get_ma_datfile.py <mascot-directory> <mascot-datfile>
-```
+
+    $ python get_ma_datfile.py <mascot-directory> <mascot-datfile>
+
 3. **parse_ma_datfile.py**
 
 This script filters a .dat file according to minimum ionsscore, maximum peptide expectation value and the pep2pro ambiguity filter. The script creates an outputfile in json format as *local-datfile*.json
-```sh
-python parse_ma_datfile.py <local-datfile> <min-ionsscore> <max-expectation-value>
-```
+
+    $ python parse_ma_datfile.py <local-datfile> <min-ionsscore> <max-expectation-value>
+
 4. **load_ma_datfile.py**
 
 This script imports the json resultfile from parse_ma_datfile.py into the MySQL Database, specified in the MYSQLDB section of the mascot_search.ini.
-```sh
-python load_ma_datfile.py <local-json-resultfile>
-```
+
+    $ python load_ma_datfile.py <local-json-resultfile>
+
 Optional parameters are 
 * experiment
 * genotype
