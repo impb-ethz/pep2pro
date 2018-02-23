@@ -19,7 +19,7 @@ If you want to import the data into a MySQL Database:
 
 ## Installation
 
-  $ git clone https://github.com/impb-ethz/pep2pro.git
+    $ git clone https://github.com/impb-ethz/pep2pro.git
 
 
 ## How to use
