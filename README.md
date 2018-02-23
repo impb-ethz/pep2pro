@@ -2,6 +2,8 @@
 easy pep2pro - from peptide to proteome V2
 
 ## Prerequistis
+The scripts were written for **Python Version 2**.
+
 Following python libraries are required:
 * json
 * click
@@ -10,8 +12,15 @@ Following python libraries are required:
 * cookielib
 * msparser (s. http://www.matrixscience.com/msparser_download.html)
 * Bio
+
 If you want to import the data into a MySQL Database:
+
 * mysql.connector
+
+## Installation
+
+  $ git clone https://github.com/impb-ethz/pep2pro.git
+
 
 ## How to use
 
@@ -30,10 +39,14 @@ file=x-cgi/ms-status.exe
 [USER]
 username=<mascot username>
 password=<mascot password>
+
+[DATFILEPATH]
+;path to which datfiles will be downloaded  
+path=/var/mascot/datfiles/
 ```
 
 #### mascot_search.ini
-The file contains parameter to filter downloaded mascot dat-files. 
+The file contains parameter to parse and load mascot dat-files. 
 ```
 [PEPTIDESUMMARY]
 ;defines the minimal probability of the ms_peptidesummary object call
@@ -51,16 +64,16 @@ v2 = \[\\\\file\-server\.ethzh\.ch\\Data2San(.*)\]
 [MODIFICATIONS]
 ;define modifications as used in dat-file
 ;with amino acid and new value and modification type
-;separated by comma.
+;separated by comma, e.g. Phospho (S)=S,S166,Phospho.
 ;if n-term modification, use . (dot) so modification 
 ;will be added at the beginning of modified peptide
 ;IMPORTANT!!!!!!!!!!!!
 ;if modification type is specified, the algorithm
 ;checks if peptides (unmodified) between rank 1 and rank 2 hits
-;are the same and if so, if ratio of ionsscore is <= 0.4
-;the modifications of that type are removed because of
+;are the same. If that is the case and the ratio of ionsscore is <= 0.4
+;no modification is shown as peptide_modified because of
 ;uncertain position, but the peptide is marked as modified 
-;in such type, e.g. Phospho
+;in the specified types, e.g. Phospho
 ;IMPORTANT!!!!!!!!!!!!
 ;for N-term modification, only one triplet is allowed, 
 ;e.g. Acetyl (Protein N-term)=.,42,Acetyl
@@ -70,24 +83,32 @@ Acetyl (Protein N-term)=.,42,Acetyl
 Phospho_STY (STY)=S,S166,Phospho,T,T181,Phospho,Y,Y243,Phospho
 
 [SEARCHDATABASES]
-;define all search database with an alias
-;the alias will be used to define regular expression to 
-;determine valid locus and if protein is decoy
+;define all search database with an alias.
+;the alias has to exists as SECTION in the ini file
+;to define regular expression to determine valid 
+;locus and if protein is decoy
 ;shortversion should not be longer then 25 characters
-tair10=TAIR10_20110117.fasta
-
-[SEARCHDATABASEPATH]
-;path where the search databases used in mascot can be found 
-;and where the summary files created with make2pdb.py will be stored
-path=/var/databases/searchdbs
-
-[MYSQLDB]
-user=<database username>
-password=<database password>
-host=<mysql server>
-database=<database name>
-
+tair10=TAIR10_20110117.fasta 
+                                                                           
+[SEARCHDATABASEPATH]                                                       
+;path where the search databases used in mascot can be found              
+;and where the summary files created with make2pdb.py will be stored      
+path=/var/databases/searchdbs                                             
+                                                                          
+[MYSQLDB]                                                                  
+;connection parameters and credentials to store data in                    
+;a MySQL Database                                                          
+user=<database username>                                                  
+password=<database password>                                               
+host=<mysql server>                                                        
+database=<database name>                                                  
+                                                                          
 [tair10]
+;define all valid loci as regular expression, comma separated
+;1. regex for the locus, 2. substring of the locus, 3. decoy loci False/True
+;e.g. AT1G01010.1 is a valid locus
+;REV_AT1G01010.1 is a valid locus and decoy
+;zz_RAV03.881.12 is not a valid locus
 locus=^AT.G.....$,^REV_AT.G.....$
 locus_len=9,13
 decoy=False,True
@@ -98,26 +119,26 @@ decoy=False,True
 1. **makep2pdb.py**
 
 Run makep2pdb.py to generate needed summary files for the database you used in mascot. This creates two additional files *inputfile*.json and *inputfile*.stats.json which will be saved in the [SEARCHDATABASEPATH] (s. mascot_search.ini).
-```sh
-python make2pdb.py <searchdatabase>
-```
+
+  $ python make2pdb.py <searchdatabase>
+
 2. **get_ma_datfile.py**
 
-This script downloads a .dat file from the mascot server for further processing with load_ma_datfile.py. The server url and access credentials have to be provided in mascot_server.ini.
+This script downloads a .dat file from the mascot server for further processing with parse_ma_datfile.py. The server url and access credentials have to be provided in mascot_server.ini.
 ```sh
 python get_ma_datfile.py <mascot-directory> <mascot-datfile>
 ```
-3. **load_ma_datfile.py**
+3. **parse_ma_datfile.py**
 
 This script filters a .dat file according to minimum ionsscore, maximum peptide expectation value and the pep2pro ambiguity filter. The script creates an outputfile in json format as *local-datfile*.json
 ```sh
-python load_ma_datfile.py <local-datfile> <min-ionsscore> <max-expectation-value>
+python parse_ma_datfile.py <local-datfile> <min-ionsscore> <max-expectation-value>
 ```
-4. **todb_ma_datfile.py**
+4. **load_ma_datfile.py**
 
-This script imports the json resultfile from load_ma_datfile.py into the MySQL Database, specified in the MYSQLDB section of the mascot_search.ini.
+This script imports the json resultfile from parse_ma_datfile.py into the MySQL Database, specified in the MYSQLDB section of the mascot_search.ini.
 ```sh
-python todb_ma_datfile.py <local-json-resultfile>
+python load_ma_datfile.py <local-json-resultfile>
 ```
 Optional parameters are 
 * experiment
